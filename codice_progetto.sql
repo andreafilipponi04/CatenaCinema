@@ -7,6 +7,8 @@
 #
 ######################### Creazione basi di dati #########################
 
+set global local_infile = true;
+
 DROP DATABASE IF EXISTS Catena_cinema_multisalaDB;
 CREATE DATABASE Catena_cinema_multisalaDB;
 USE Catena_cinema_multisalaDB;
@@ -135,7 +137,7 @@ CREATE TABLE IF NOT EXISTS Proiezione (
     proiezionista CHAR(16) NOT NULL,
     PRIMARY KEY (sala, cinema, film, data_inizio),
 	FOREIGN KEY (sala, cinema) REFERENCES Sala(nome_sala, cinema),
-    FOREIGN KEY (film) REFERENCES Film(id_Film),
+    FOREIGN KEY (film) REFERENCES Film(id_film),
 	FOREIGN KEY (proiezionista) REFERENCES Staff(CF_staff)
 ) ENGINE = INNODB;
 
@@ -190,21 +192,12 @@ CREATE TABLE IF NOT EXISTS Sottoscrizione (
     FOREIGN KEY (cliente) REFERENCES Cliente(CF_cliente)
 ) ENGINE = INNODB;
 
+######################### Popolamento tabelle ############################film
+-- Popolamento della tabella Cinema da file
 
-######################### Popolamento tabelle ############################
-/*SET GLOBAL local_infile = 1;
-LOAD DATA LOCAL INFILE '/Volumes/Hard-disck_william/University/Basi di dati/Catena_cinema_multisala/Film.csv'
-INTO TABLE Film
-FIELDS TERMINATED BY ','
-IGNORE 1 LINES;*/
-
--- Popolamento della tabella Cinema
-INSERT INTO Cinema (nome_cinema, via, citta, cap, prov) VALUES
-('CineMax', 'Via Roma', 'Roma', '00100', 'RM'),
-('CineStar', 'Via Milano', 'Milano', '20100', 'MI'),
-('CineMin', 'Via Firenze', 'Firenze', '50120', 'FI'),
-('CineMoon', 'Via Napoli', 'Napoli', '80013', 'NA'),
-('CineSun', 'Via Bari', 'Bari', '70100', 'BA');
+LOAD DATA LOCAL INFILE 'C:/Users/Andrea/Downloads/cinema.csv'
+INTO TABLE Cinema
+FIELDS TERMINATED BY ',';
 
 -- Popolamento della tabella Sala
 INSERT INTO Sala (nome_sala, cinema) VALUES
@@ -267,6 +260,7 @@ INSERT INTO Staff (CF_staff, nome_staff, cognome_staff, data_nascita_staff, ruol
 ('CFDPI1234567021P', 'Giovanni', 'Vitali', '1995-11-22', 'Proiezionista', 'CineSun');
 
 -- Popolamento della tabella Cliente
+
 INSERT INTO Cliente (CF_cliente, nome_cliente, cognome_cliente, data_nascita_cliente) VALUES
 ('CFCLI1234567007A', 'Francesca', 'Russo', '1991-02-08'),
 ('CFCLI1234567008B', 'Marta', 'De Luca', '1989-09-20'),
@@ -328,6 +322,7 @@ INSERT INTO Film (titolo, data_pubblicazione, durata, trama, genere, regista) VA
 ('The Dark Knight', '2008-07-18', '02:32:00', 'Batman faces the Joker in Gotham City', 'Action', 'REG001'),
 ('E.T.', '1982-06-11', '01:55:00', 'An alien befriends a boy and finds a way home', 'Sci-fi', 'REG003'),
 ('Avatar', '2009-12-18', '02:42:00', 'Humans interact with a new alien species on Pandora', 'Sci-fi', 'REG002');
+
 
 INSERT INTO Proiezione (sala, cinema, film, data_inizio, prezzo_proiezione, proiezionista) VALUES
 -- Proiezioni per CineStar
