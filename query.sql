@@ -46,7 +46,6 @@ SELECT C.nome_cliente, C.cognome_cliente,
 FROM Cliente C;
 
 ######################### Procedure #########################
-
 DROP PROCEDURE IF EXISTS RicercaTitolo
 DELIMITER $$
 CREATE PROCEDURE RicercaTitolo(Titolo VARCHAR(50))
@@ -61,16 +60,18 @@ DELIMITER ;
 CALL RicercaTitolo('Titanic');
 
 ######################### Funzione #########################
-
-DROP TRIGGER IF EXISTS CheckInsertBiglietto
+DROP FUNCTION IF EXISTS CountaPosti
 DELIMITER $$
-CREATE TRIGGER CheckInsertBiglietto
-BEFORE INSERT ON Biglietto
-FOR EACH ROW
+CREATE FUNCTION CountaPosti(sala CHAR(2), cinema VARCHAR(26))
+RETURNS INT
+DETERMINISTIC
 BEGIN
-	IF (SELECT ruolo FROM Staff WHERE CF_staff = NEW.bigliettaio) <> 'Bigliettaio'
-    THEN SIGNAL SQLSTATE VALUE '45000'
-    SET MESSAGE_TEXT = 'TriggerError: Si sta provando a emettere un biglietto da un membro dello staff non abilitato!';
-    END IF;
-END $$
+	DECLARE numPosti INT;
+	SELECT COUNT(*) INTO numPosti 
+    FROM Posto
+    Where Posto.sala = sala AND Posto.cinema=cinema;
+    RETURN numPosti;
+END$$
 DELIMITER ;
+
+SELECT CountaPosti('S1', 'CineStar') AS numPosti;

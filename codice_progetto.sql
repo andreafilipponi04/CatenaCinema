@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS Cinema (
 DROP TABLE IF EXISTS Sala;
 
 CREATE TABLE IF NOT EXISTS Sala (
-    nome_sala VARCHAR(2) NOT NULL,
+    nome_sala CHAR(2) NOT NULL,
     cinema VARCHAR(26) NOT NULL,
     PRIMARY KEY (nome_sala, cinema),
     FOREIGN KEY (cinema) REFERENCES Cinema(nome_cinema)
@@ -40,7 +40,7 @@ DROP TABLE IF EXISTS Posto;
 CREATE TABLE IF NOT EXISTS Posto (
     fila CHAR(1) NOT NULL,
     numero_posto INT NOT NULL,
-    sala VARCHAR(2) NOT NULL,
+    sala CHAR(2) NOT NULL,
     cinema VARCHAR(26) NOT NULL,
     occupato BOOLEAN NOT NULL,
     PRIMARY KEY (fila, numero_posto, sala, cinema),
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS Film (
 DROP TABLE IF EXISTS Proiezione;
 
 CREATE TABLE IF NOT EXISTS Proiezione (
-    sala VARCHAR(2) NOT NULL,
+    sala CHAR(2) NOT NULL,
     cinema VARCHAR(26) NOT NULL,
     film INT NOT NULL,
     data_inizio DATETIME NOT NULL,
@@ -531,7 +531,3 @@ BEGIN
       AND cinema = NEW.posto_cinema;
 END $$;
 DELIMITER ;
-
-select *
-from Posto
-where occupato = true;
