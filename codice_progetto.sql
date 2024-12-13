@@ -384,8 +384,15 @@ INSERT INTO Biglietto (proiezione_sala, proiezione_cinema, proiezione_film, proi
 ('S1', 'CineStar', '1', '2024-12-10 20:30:00', 'A', '1', 'S1', 'CineStar', 'CFCLI1234567007A', 'CFDPI1234567022Q'),
 ('S1', 'CineStar', '2', '2024-12-11 18:00:00', 'A', '2', 'S1', 'CineStar', 'CFCLI1234567008B', 'CFDPI1234567022Q'),
 <<<<<<< HEAD
+<<<<<<< HEAD
 -- Biglietti per CineMax
 ('S2', 'CineMax', '3', '2023-12-12 20:00:00', 'A', '1', 'S2', 'CineMax', 'CFCLI1234567010D', 'CFDPI1234567009C'),
+=======
+('S2', 'CineStar', '5', '2024-12-12 21:00:00', 'A', '3', 'S1', 'CineStar', 'CFCLI1234567009C', 'CFDPI1234567022Q'),
+('S2', 'CineStar', '5', '2024-12-12 21:00:00', 'A', '4', 'S2', 'CineStar', 'CFCLI1234567010D', 'CFDPI1234567022Q'),
+-- Biglietti per CineMax
+('S2', 'CineMax', '3', '2024-12-12 20:00:00', 'A', '1', 'S2', 'CineMax', 'CFCLI1234567010D', 'CFDPI1234567009C'),
+>>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2
 =======
 ('S2', 'CineStar', '5', '2024-12-12 21:00:00', 'A', '3', 'S1', 'CineStar', 'CFCLI1234567009C', 'CFDPI1234567022Q'),
 ('S2', 'CineStar', '5', '2024-12-12 21:00:00', 'A', '4', 'S2', 'CineStar', 'CFCLI1234567010D', 'CFDPI1234567022Q'),
@@ -464,6 +471,7 @@ INSERT INTO Sottoscrizione (abbonamento, cliente, data_inizio_abb, data_fine_abb
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 ######################### Procedure #########################
 -- Procedura 1: Dato un titolo in input, si restituiscono tutte le proiezioni di un determinato film in tutti i cinema
@@ -508,6 +516,8 @@ BEGIN
 END$$
 DELIMITER ;
 
+=======
+>>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2
 =======
 >>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2
 ######################### Trigger #########################
@@ -584,6 +594,7 @@ BEGIN
 END $$;
 DELIMITER ;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 -- Trigger 6: Verifica che un biglietto non possa essere acquistato per una programmazione passata
 DROP TRIGGER IF EXISTS CheckDataInizioFilm
@@ -598,5 +609,4 @@ BEGIN
     END IF;
 END $$;
 DELIMITER ;
-=======
->>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2
+

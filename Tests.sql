@@ -1,5 +1,6 @@
 ######################### Tests #########################
 <<<<<<< HEAD
+<<<<<<< HEAD
 -- Test procedura 1:
 CALL RicercaTitolo('Titanic');
 
@@ -10,6 +11,8 @@ SELECT ContaPosti('S1', 'CineStar') AS numPosti;
 SELECT ContaPostiDisponibili('S1', 'CineStar') AS numPostiDisponibili;
 
 
+=======
+>>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2
 =======
 >>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2
 -- Test trigger 1
@@ -31,6 +34,7 @@ INSERT INTO Proiezione (sala, cinema, film, data_inizio, prezzo_proiezione, proi
 -- Direttore non valido
 INSERT INTO Staff (CF_staff, nome_staff, cognome_staff, data_nascita_staff, ruolo, cinema) VALUES
 <<<<<<< HEAD
+<<<<<<< HEAD
 ('CFDPI1264567007A', 'Luca', 'Rossi', '1985-05-12', 'Direttore', 'CineMin');
 
 -- Test trigger 5
@@ -44,6 +48,9 @@ WHERE cinema = 'CineStar';
 -- Test trigger 6
 INSERT INTO Biglietto (proiezione_sala, proiezione_cinema, proiezione_film, proiezione_data, posto_fila, posto_numero, posto_sala, posto_cinema, cliente, bigliettaio) VALUES
 ('S2', 'CineMax', '3', '2023-12-12 20:00:00', 'A', '3', 'S1', 'CineMax', 'CFCLI1234567009C', 'CFDPI1234567022Q');
+=======
+('CFDPI1264567007A', 'Luca', 'Rossi', '1985-05-12', 'Direttore', 'CineMin');
+>>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2
 =======
 ('CFDPI1264567007A', 'Luca', 'Rossi', '1985-05-12', 'Direttore', 'CineMin');
 >>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2

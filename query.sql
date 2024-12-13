@@ -78,4 +78,7 @@ END$$
 DELIMITER ;
 
 SELECT CountaPosti('S1', 'CineStar') AS numPosti;
+<<<<<<< HEAD
+>>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2
+=======
 >>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2
