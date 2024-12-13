@@ -7,8 +7,7 @@
 #
 ######################### Creazione basi di dati #########################
 
-set global local_infile = true;
-
+SET GLOBAL local_infile = true;
 DROP DATABASE IF EXISTS Catena_cinema_multisalaDB;
 CREATE DATABASE Catena_cinema_multisalaDB;
 USE Catena_cinema_multisalaDB;
@@ -36,7 +35,6 @@ CREATE TABLE IF NOT EXISTS Sala (
 ) ENGINE = INNODB;
 
 -- Posto
-
 DROP TABLE IF EXISTS Posto;
 
 CREATE TABLE IF NOT EXISTS Posto (
@@ -45,7 +43,7 @@ CREATE TABLE IF NOT EXISTS Posto (
     sala VARCHAR(2) NOT NULL,
     cinema VARCHAR(26) NOT NULL,
     occupato BOOLEAN NOT NULL,
-    PRIMARY KEY (fila, numero_posto, sala),
+    PRIMARY KEY (fila, numero_posto, sala, cinema),
     FOREIGN KEY (sala, cinema) REFERENCES Sala(nome_sala, cinema)
 ) ENGINE = INNODB;
 
@@ -137,7 +135,7 @@ CREATE TABLE IF NOT EXISTS Proiezione (
     proiezionista CHAR(16) NOT NULL,
     PRIMARY KEY (sala, cinema, film, data_inizio),
 	FOREIGN KEY (sala, cinema) REFERENCES Sala(nome_sala, cinema),
-    FOREIGN KEY (film) REFERENCES Film(id_film),
+    FOREIGN KEY (film) REFERENCES Film(id_Film),
 	FOREIGN KEY (proiezionista) REFERENCES Staff(CF_staff)
 ) ENGINE = INNODB;
 
@@ -161,6 +159,11 @@ CREATE TABLE IF NOT EXISTS Biglietto (
     proiezione_data DATETIME NOT NULL,
     cliente CHAR(16) NOT NULL,
     bigliettaio CHAR(16) NOT NULL,
+    posto_fila CHAR(1) NOT NULL,
+    posto_sala CHAR(2) NOT NULL,
+    posto_numero INT NOT NULL,
+    posto_cinema VARCHAR(26) NOT NULL,
+	FOREIGN KEY (posto_fila, posto_numero, posto_sala, posto_cinema) REFERENCES Posto(fila, numero_posto, sala, cinema),
     FOREIGN KEY (proiezione_sala, proiezione_cinema, proiezione_film, proiezione_data) REFERENCES Proiezione(sala, cinema, film, data_inizio),
     FOREIGN KEY (cliente) REFERENCES Cliente(CF_cliente),
     FOREIGN KEY (bigliettaio) REFERENCES Staff(CF_staff)
@@ -192,12 +195,16 @@ CREATE TABLE IF NOT EXISTS Sottoscrizione (
     FOREIGN KEY (cliente) REFERENCES Cliente(CF_cliente)
 ) ENGINE = INNODB;
 
-######################### Popolamento tabelle ############################film
--- Popolamento della tabella Cinema da file
 
-LOAD DATA LOCAL INFILE 'C:/Users/Andrea/Downloads/cinema.csv'
-INTO TABLE Cinema
-FIELDS TERMINATED BY ',';
+######################### Popolamento tabelle ############################
+
+-- Popolamento della tabella Cinema
+INSERT INTO Cinema (nome_cinema, via, citta, cap, prov) VALUES
+('CineMax', 'Via Roma', 'Roma', '00100', 'RM'),
+('CineStar', 'Via Milano', 'Milano', '20100', 'MI'),
+('CineMin', 'Via Firenze', 'Firenze', '50120', 'FI'),
+('CineMoon', 'Via Napoli', 'Napoli', '80013', 'NA'),
+('CineSun', 'Via Bari', 'Bari', '70100', 'BA');
 
 -- Popolamento della tabella Sala
 INSERT INTO Sala (nome_sala, cinema) VALUES
@@ -224,12 +231,32 @@ INSERT INTO Sala (nome_sala, cinema) VALUES
 
 -- Popolamento della tabella Posto
 INSERT INTO Posto (fila, numero_posto, sala, cinema, occupato) VALUES
+-- CineStar
 ('A', 1, 'S1', 'CineStar', FALSE),
 ('A', 2, 'S1', 'CineStar', FALSE),
-('B', 1, 'S1', 'CineStar', TRUE),
-('B', 2, 'S1', 'CineStar', FALSE),
+('A', 3, 'S1', 'CineStar', FALSE),
+('A', 4, 'S2', 'CineStar', FALSE),
+
+-- CineMax
 ('A', 1, 'S2', 'CineMax', FALSE),
-('A', 2, 'S2', 'CineMax', TRUE);
+('A', 2, 'S2', 'CineMax', FALSE),
+('A', 3, 'S1', 'CineMax', FALSE),
+
+-- CineMin
+('A', 1, 'S1', 'CineMin', FALSE),
+('A', 2, 'S2', 'CineMin', FALSE),
+('A', 3, 'S1', 'CineMin', FALSE),
+
+-- CineMoon
+('A', 1, 'S2', 'CineMoon', FALSE),
+('A', 2, 'S1', 'CineMoon', FALSE),
+('A', 3, 'S2', 'CineMoon', FALSE),
+
+-- CineSun
+('A', 1, 'S1', 'CineSun', FALSE),
+('A', 2, 'S2', 'CineSun', FALSE),
+('A', 3, 'S1', 'CineSun', FALSE);
+
 
 -- Popolamento della tabella Staff
 INSERT INTO Staff (CF_staff, nome_staff, cognome_staff, data_nascita_staff, ruolo, cinema) VALUES
@@ -260,7 +287,6 @@ INSERT INTO Staff (CF_staff, nome_staff, cognome_staff, data_nascita_staff, ruol
 ('CFDPI1234567021P', 'Giovanni', 'Vitali', '1995-11-22', 'Proiezionista', 'CineSun');
 
 -- Popolamento della tabella Cliente
-
 INSERT INTO Cliente (CF_cliente, nome_cliente, cognome_cliente, data_nascita_cliente) VALUES
 ('CFCLI1234567007A', 'Francesca', 'Russo', '1991-02-08'),
 ('CFCLI1234567008B', 'Marta', 'De Luca', '1989-09-20'),
@@ -323,7 +349,6 @@ INSERT INTO Film (titolo, data_pubblicazione, durata, trama, genere, regista) VA
 ('E.T.', '1982-06-11', '01:55:00', 'An alien befriends a boy and finds a way home', 'Sci-fi', 'REG003'),
 ('Avatar', '2009-12-18', '02:42:00', 'Humans interact with a new alien species on Pandora', 'Sci-fi', 'REG002');
 
-
 INSERT INTO Proiezione (sala, cinema, film, data_inizio, prezzo_proiezione, proiezionista) VALUES
 -- Proiezioni per CineStar
 ('S1', 'CineStar', '1', '2024-12-10 20:30:00', '8.00', 'CFDPI1234567012F'),
@@ -354,28 +379,28 @@ INSERT INTO Abbonamento (tipo_piano, prezzo, durata) VALUES
 ('Settimanale', '15.00', '7');
 
 -- Popolamento della tabella Biglietto
-INSERT INTO Biglietto (proiezione_sala, proiezione_cinema, proiezione_film, proiezione_data, cliente, bigliettaio) VALUES
+INSERT INTO Biglietto (proiezione_sala, proiezione_cinema, proiezione_film, proiezione_data, posto_fila, posto_numero, posto_sala, posto_cinema, cliente, bigliettaio) VALUES
 -- Biglietti per CineStar
-('S1', 'CineStar', '1', '2024-12-10 20:30:00', 'CFCLI1234567007A', 'CFDPI1234567022Q'),
-('S1', 'CineStar', '2', '2024-12-11 18:00:00', 'CFCLI1234567008B', 'CFDPI1234567022Q'),
-('S2', 'CineStar', '5', '2024-12-12 21:00:00', 'CFCLI1234567009C', 'CFDPI1234567022Q'),
-('S2', 'CineStar', '5', '2024-12-12 21:00:00', 'CFCLI1234567010D', 'CFDPI1234567022Q'),
+('S1', 'CineStar', '1', '2024-12-10 20:30:00', 'A', '1', 'S1', 'CineStar', 'CFCLI1234567007A', 'CFDPI1234567022Q'),
+('S1', 'CineStar', '2', '2024-12-11 18:00:00', 'A', '2', 'S1', 'CineStar', 'CFCLI1234567008B', 'CFDPI1234567022Q'),
+('S2', 'CineStar', '5', '2024-12-12 21:00:00', 'A', '3', 'S1', 'CineStar', 'CFCLI1234567009C', 'CFDPI1234567022Q'),
+('S2', 'CineStar', '5', '2024-12-12 21:00:00', 'A', '4', 'S2', 'CineStar', 'CFCLI1234567010D', 'CFDPI1234567022Q'),
 -- Biglietti per CineMax
-('S2', 'CineMax', '3', '2024-12-12 20:00:00', 'CFCLI1234567010D', 'CFDPI1234567009C'),
-('S2', 'CineMax', '4', '2024-12-13 21:30:00', 'CFCLI1234567011E', 'CFDPI1234567009C'),
-('S1', 'CineMax', '2', '2024-12-14 19:00:00', 'CFCLI1234567012F', 'CFDPI1234567009C'),
+('S2', 'CineMax', '3', '2024-12-12 20:00:00', 'A', '1', 'S2', 'CineMax', 'CFCLI1234567010D', 'CFDPI1234567009C'),
+('S2', 'CineMax', '4', '2024-12-13 21:30:00', 'A', '2', 'S2', 'CineMax', 'CFCLI1234567011E', 'CFDPI1234567009C'),
+('S1', 'CineMax', '2', '2024-12-14 19:00:00', 'A', '3', 'S1', 'CineMax', 'CFCLI1234567012F', 'CFDPI1234567009C'),
 -- Biglietti per CineMin
-('S1', 'CineMin', '5', '2024-12-15 18:00:00', 'CFCLI1234567013G', 'CFDPI1234567023R'),
-('S2', 'CineMin', '3', '2024-12-16 20:00:00', 'CFCLI1234567014H', 'CFDPI1234567023R'),
-('S1', 'CineMin', '1', '2024-12-17 21:30:00', 'CFCLI1234567015I', 'CFDPI1234567023R'),
+('S1', 'CineMin', '5', '2024-12-15 18:00:00', 'A', '1', 'S1', 'CineMin', 'CFCLI1234567013G', 'CFDPI1234567023R'),
+('S2', 'CineMin', '3', '2024-12-16 20:00:00', 'A', '2', 'S2', 'CineMin', 'CFCLI1234567014H', 'CFDPI1234567023R'),
+('S1', 'CineMin', '1', '2024-12-17 21:30:00', 'A', '3', 'S1', 'CineMin', 'CFCLI1234567015I', 'CFDPI1234567023R'),
 -- Biglietti per CineMoon
-('S2', 'CineMoon', '4', '2024-12-18 19:00:00', 'CFCLI1234567016J', 'CFDPI1234567018L'),
-('S1', 'CineMoon', '2', '2024-12-19 18:30:00', 'CFCLI1234567017K', 'CFDPI1234567018L'),
-('S2', 'CineMoon', '5', '2024-12-20 20:30:00', 'CFCLI1234567018L', 'CFDPI1234567018L'),
+('S2', 'CineMoon', '4', '2024-12-18 19:00:00', 'A', '1', 'S2', 'CineMoon', 'CFCLI1234567016J', 'CFDPI1234567018L'),
+('S1', 'CineMoon', '2', '2024-12-19 18:30:00', 'A', '2', 'S1', 'CineMoon', 'CFCLI1234567017K', 'CFDPI1234567018L'),
+('S2', 'CineMoon', '5', '2024-12-20 20:30:00', 'A', '3', 'S2', 'CineMoon', 'CFCLI1234567018L', 'CFDPI1234567018L'),
 -- Biglietti per CineSun
-('S1', 'CineSun', '1', '2024-12-21 20:00:00', 'CFCLI1234567019M', 'CFDPI1234567025T'),
-('S2', 'CineSun', '3', '2024-12-22 21:00:00', 'CFCLI1234567020N', 'CFDPI1234567025T'),
-('S1', 'CineSun', '2', '2024-12-23 19:30:00', 'CFCLI1234567020N', 'CFDPI1234567025T');
+('S1', 'CineSun', '1', '2024-12-21 20:00:00', 'A', '1', 'S1', 'CineSun', 'CFCLI1234567019M', 'CFDPI1234567025T'),
+('S2', 'CineSun', '3', '2024-12-22 21:00:00', 'A', '2', 'S2', 'CineSun', 'CFCLI1234567020N', 'CFDPI1234567025T'),
+('S1', 'CineSun', '2', '2024-12-23 19:30:00', 'A', '3', 'S1', 'CineSun', 'CFCLI1234567020N', 'CFDPI1234567025T');
 
 -- Popolamento della tabella Composizione
 INSERT INTO Composizione (quantita, ordine, snacks) VALUES
@@ -431,3 +456,82 @@ INSERT INTO Sottoscrizione (abbonamento, cliente, data_inizio_abb, data_fine_abb
 ('Mensile', 'CFCLI1234567015I', '2022-09-01', '2022-09-30', FALSE),
 ('Annuale', 'CFCLI1234567016J', '2022-01-01', '2022-12-31', FALSE),
 ('Settimanale', 'CFCLI1234567017K', '2022-08-01', '2022-08-07', FALSE);
+
+
+######################### Trigger #########################
+
+-- Trigger 1: Verifica che i biglietti vengano emessi da un membro dello staff con ruolo 'Bigliettaio'
+DROP TRIGGER IF EXISTS CheckInsertBiglietto
+DELIMITER $$
+CREATE TRIGGER CheckInsertBiglietto
+BEFORE INSERT ON Biglietto
+FOR EACH ROW
+BEGIN
+	IF (SELECT ruolo FROM Staff WHERE CF_staff = NEW.bigliettaio) <> 'Bigliettaio'
+    THEN SIGNAL SQLSTATE VALUE '45000'
+    SET MESSAGE_TEXT = 'TriggerError: Si sta provando a emettere un biglietto da un membro dello staff non abilitato!';
+    END IF;
+END $$
+DELIMITER ;
+
+-- Trigger 2: Verifica che gli ordini vengano emessi da un membro dello staff con ruolo 'Barista'
+DROP TRIGGER IF EXISTS CheckEmissioneOrdine
+DELIMITER $$
+CREATE TRIGGER CheckEmissioneOrdine
+BEFORE INSERT ON Ordine
+FOR EACH ROW
+BEGIN
+	IF (SELECT ruolo FROM Staff WHERE CF_staff = NEW.staff) <> 'Barista'
+    THEN SIGNAL SQLSTATE VALUE '45000'
+    SET MESSAGE_TEXT = 'TriggerError: Si sta provando a emettere un ordine da un membro dello staff non abilitato!';
+    END IF;
+END $$
+DELIMITER ;
+
+-- Trigger 3: Verifica che le proiezione vengano gestite da un membro dello staff con ruolo 'Proiezionista'
+DROP TRIGGER IF EXISTS CheckProiezionista
+DELIMITER $$
+CREATE TRIGGER CheckProiezionista
+BEFORE INSERT ON Proiezione
+FOR EACH ROW
+BEGIN
+	IF (SELECT ruolo FROM Staff WHERE CF_staff = NEW.proiezionista) <> 'Proiezionista'
+    THEN SIGNAL SQLSTATE VALUE '45000'
+    SET MESSAGE_TEXT = 'TriggerError: Si sta provando a programmare una proiezione da un membro dello staff non abilitato!';
+    END IF;
+END $$
+DELIMITER ;
+
+-- Trigger 4: Verifica che all'interno di un cinema ci sia un solo direttore
+DROP TRIGGER IF EXISTS CheckDirettore
+DELIMITER $$
+CREATE TRIGGER CheckDirettore
+BEFORE INSERT ON Staff
+FOR EACH ROW
+BEGIN
+	IF (SELECT count(*) FROM Staff WHERE ruolo = NEW.ruolo AND cinema = NEW.cinema) <> 0
+    THEN SIGNAL SQLSTATE VALUE '45000'
+    SET MESSAGE_TEXT = 'TriggerError: Si sta provando ad assegnare ad un cinema più di un direttore';
+    END IF;
+END $$
+DELIMITER ;
+
+-- Trigger 5: Quando si emette un biglietto, il posto associato viene reso occupato
+DROP TRIGGER IF EXISTS OccupaPosto
+DELIMITER $$;
+CREATE TRIGGER OccupaPosto
+AFTER INSERT ON Biglietto
+FOR EACH ROW
+BEGIN
+    UPDATE Posto
+    SET occupato = TRUE
+    WHERE fila = NEW.posto_fila
+      AND numero_posto = NEW.posto_numero
+      AND sala = NEW.posto_sala
+      AND cinema = NEW.posto_cinema;
+END $$;
+DELIMITER ;
+
+select *
+from Posto
+where occupato = true;
