@@ -1,4 +1,4 @@
-
+USE Catena_cinema_multisalaDB;
 ######################### Interrogazioni #########################
 
 -- Query 1: Ottenere le generalità di tutti i clienti abbonati
@@ -59,3 +59,18 @@ END $$
 DELIMITER ;
 
 CALL RicercaTitolo('Titanic');
+
+######################### Funzione #########################
+
+DROP TRIGGER IF EXISTS CheckInsertBiglietto
+DELIMITER $$
+CREATE TRIGGER CheckInsertBiglietto
+BEFORE INSERT ON Biglietto
+FOR EACH ROW
+BEGIN
+	IF (SELECT ruolo FROM Staff WHERE CF_staff = NEW.bigliettaio) <> 'Bigliettaio'
+    THEN SIGNAL SQLSTATE VALUE '45000'
+    SET MESSAGE_TEXT = 'TriggerError: Si sta provando a emettere un biglietto da un membro dello staff non abilitato!';
+    END IF;
+END $$
+DELIMITER ;
