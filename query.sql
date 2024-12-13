@@ -1,4 +1,4 @@
-
+USE Catena_cinema_multisalaDB;
 ######################### Interrogazioni #########################
 
 -- Query 1: Ottenere le generalità di tutti i clienti abbonati
@@ -43,10 +43,12 @@ SELECT C.nome_cliente, C.cognome_cliente,
 	(SELECT COUNT(*)
      FROM Biglietto B 
      WHERE B.cliente = C.CF_cliente) AS numero_biglietti
+<<<<<<< HEAD
+FROM Cliente C;
+=======
 FROM Cliente C;
 
 ######################### Procedure #########################
-
 DROP PROCEDURE IF EXISTS RicercaTitolo
 DELIMITER $$
 CREATE PROCEDURE RicercaTitolo(Titolo VARCHAR(50))
@@ -59,3 +61,21 @@ END $$
 DELIMITER ;
 
 CALL RicercaTitolo('Titanic');
+
+######################### Funzione #########################
+DROP FUNCTION IF EXISTS CountaPosti
+DELIMITER $$
+CREATE FUNCTION CountaPosti(sala CHAR(2), cinema VARCHAR(26))
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE numPosti INT;
+	SELECT COUNT(*) INTO numPosti 
+    FROM Posto
+    Where Posto.sala = sala AND Posto.cinema=cinema;
+    RETURN numPosti;
+END$$
+DELIMITER ;
+
+SELECT CountaPosti('S1', 'CineStar') AS numPosti;
+>>>>>>> 6414b89e6e86a9b56fb050b8206b35ef228bccf2
